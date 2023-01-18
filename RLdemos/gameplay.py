@@ -94,7 +94,7 @@ if __name__ == "__main__":
     game.set_episode_start_time(10)
 
     # Makes the window appear (turned on by default)
-    game.set_window_visible(False)
+    game.set_window_visible(True)
 
     # Turns on the sound. (turned off by default)
     # game.set_sound_enabled(True)
@@ -152,7 +152,7 @@ if __name__ == "__main__":
             screen_buf = torch.from_numpy(screen_buf).float()
             screen_buf = torch.nn.functional.pad(screen_buf, (0, 0, 0, 0, 4, 4), "constant", 0)  # pad so it fits the network
             screen_buf = torch.transpose(screen_buf, dim0=0, dim1=2)  # need to put channels first for VGG
-            screen_buf = screen_buf.unsqueeze(0)  # add in batch dimension, required by VGG
+            screen_buf = screen_buf.unsqueeze(0)/256  # add in batch dimension, required by VGG. Normalise
 
             action, log_probs = agent.act(screen_buf)
             r = game.make_action(actions[action])
