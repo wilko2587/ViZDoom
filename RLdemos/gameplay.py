@@ -127,13 +127,13 @@ if __name__ == "__main__":
     #sleep_time = 1.0 / vzd.DEFAULT_TICRATE  # = 0.028
     sleep_time = 0.0
     reward_log = []
+    agent = REINFORCE.agent(actions=actions, gradient_accumulation=16, lr=4e-4)
     for i in range(episodes):
         print("Episode #" + str(i + 1))
 
         # Starts a new episode. It is not needed right after init() but it doesn't cost much. At least the loop is nicer.
         game.new_episode()
 
-        agent = REINFORCE.agent(actions=actions)
         while not game.is_episode_finished():
 
             # Gets the state

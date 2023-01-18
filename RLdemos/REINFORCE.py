@@ -5,7 +5,9 @@ from torch import optim
 from torch.distributions import Categorical
 
 class agent:
-    def __init__(self, actions):
+    def __init__(self, actions,
+                 gradient_accumulation: int = 1,
+                 lr: float = 1e-4):
         self.actions = actions
 
         self.network = SmallNet(
@@ -14,13 +16,15 @@ class agent:
             num_classes=len(actions),
         )
 
-        self.gamma = 0.99
-        self.optimizer = optim.RMSprop(self.network.parameters(), lr=1e-4)
+        self.optimizer = optim.RMSprop(self.network.parameters(), lr=lr)
         self.states = []
         self.actions = []
         self.log_probs = []
         self.rewards = []
         self.terms = []
+
+        self.gradient_accumulation = gradient_accumulation
+        self.gradient_accumulation_counter = 0
 
     def act(self, state: torch.FloatTensor):
         # calculate action and return the action
@@ -54,23 +58,17 @@ class agent:
         self.network.load_state_dict(x)
 
     def update_networks(self):
-        # NB: we will assume the last element in each list is the terminal one
-
-        # calculate the running rewards
-#        Rs = [] # running rewards
-#        R = 0 # initialise
-#        for r in self.rewards[::-1]:
-#            R = (r + R * self.gamma)/200
-#            Rs.append(R)
-#        Rs = Rs[::-1]
 
         # replay the episode and update the network
         reinforce_loss = 0 # initialise
         Rtot = sum(self.rewards)/100
         for t in range(len(self.states)):
             log_prob = self.log_probs[t]
-            reinforce_loss += -log_prob * Rtot#Rs[t]
+            reinforce_loss += -log_prob * Rtot
 
-        self.optimizer.zero_grad()
         reinforce_loss.backward()
-        self.optimizer.step()
+        self.gradient_accumulation_counter += 1
+        if self.gradient_accumulation_counter % self.gradient_accumulation == 0:
+            self.optimizer.step()
+            self.optimizer.zero_grad()
+            self.gradient_accumulation_counter = 0 # reset
