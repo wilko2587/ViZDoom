@@ -129,7 +129,6 @@ if __name__ == "__main__":
     reward_log = []
     agent = REINFORCE.agent(actions=actions, gradient_accumulation=16, lr=4e-4)
     for i in range(episodes):
-        print("Episode #" + str(i + 1))
 
         # Starts a new episode. It is not needed right after init() but it doesn't cost much. At least the loop is nicer.
         game.new_episode()
