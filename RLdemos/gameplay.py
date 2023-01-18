@@ -168,7 +168,7 @@ if __name__ == "__main__":
         agent.reset()
 
         # Check how the episode went.
-        print("Episode: {} | reward: {}", game.get_total_reward())
+        print("Episode: {} | reward: {}".format(i, game.get_total_reward()))
         reward_log.append(game.get_total_reward())
         if i % 100 == 0:
             pd.Series(reward_log).to_csv("reward_log.csv")
