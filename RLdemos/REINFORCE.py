@@ -5,20 +5,21 @@ from torch import optim
 from torch.distributions import Categorical
 
 class agent:
-    def __init__(self, actions,
+    def __init__(self, n_actions,
                  gradient_accumulation: int = 1,
                  lr: float = 1e-4):
-        self.actions = actions
+
+        self.n_actions = n_actions
 
         self.network = SmallNet(
             in_height=160,
             in_width=128, # width needs 8 padding to fit architecture (divisible by 32)
-            num_classes=len(actions),
+            num_classes=n_actions,
         )
 
         self.optimizer = optim.RMSprop(self.network.parameters(), lr=lr)
         self.states = []
-        self.actions = []
+        self.n_actions = []
         self.log_probs = []
         self.rewards = []
         self.terms = []
@@ -36,14 +37,14 @@ class agent:
 
     def remember(self, tup):
         self.states.append(tup[0])
-        self.actions.append(tup[1])
+        self.n_actions.append(tup[1])
         self.log_probs.append(tup[2])
         self.rewards.append(tup[3])
         self.terms.append(tup[4])
 
     def reset(self):
         self.states = []
-        self.actions = []
+        self.n_actions = []
         self.log_probs = []
         self.rewards = []
         self.terms = []
@@ -68,6 +69,9 @@ class agent:
 
         reinforce_loss.backward()
         self.gradient_accumulation_counter += 1
+        # we can update the network with accumulation of self.gradient_accumulation
+        # episodes to improve learning stability
+
         if self.gradient_accumulation_counter % self.gradient_accumulation == 0:
             self.optimizer.step()
             self.optimizer.zero_grad()

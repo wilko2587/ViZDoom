@@ -46,6 +46,7 @@ class SmallNet(nn.Module):
                             out_channels=16,
                             stride=1,
                             padding=1)
+
         self.m2 = nn.MaxPool2d(kernel_size=4)
         self.r2 = nn.ReLU()
 
