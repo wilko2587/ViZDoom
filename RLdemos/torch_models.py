@@ -181,10 +181,6 @@ class MedNet(nn.Module):
         x = self.m2(x)
         x = self.rc2(x)
         x = self.c3(x)
-        basic
-        scenario
-        map1
-        readded
         x = self.m3(x)
         x = self.rc3(x)
         x = self.c4(x)
