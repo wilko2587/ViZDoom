@@ -124,6 +124,8 @@ class MedNet(nn.Module):
 
         super(MedNet, self).__init__()
 
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
         self.c1 = nn.Conv2d(kernel_size=3,
                             in_channels=3,
                             out_channels=16,
@@ -168,8 +170,10 @@ class MedNet(nn.Module):
         self.fc3 = nn.Linear(128, 128)
         self.d3 = nn.Dropout(p=dropout)
         self.fc4 = nn.Linear(128, num_classes)
+        self.to(self.device)
 
     def forward(self, x):
+        x = x.to(self.device)
         x = self.c1(x)
         x = self.m1(x)
         x = self.r1(x)
