@@ -58,7 +58,14 @@ if __name__ == "__main__":
                                 vzd.Button.MOVE_BACKWARD,
                                 vzd.Button.TURN_LEFT,
                                 vzd.Button.TURN_RIGHT,
-                                vzd.Button.ATTACK])
+                                vzd.Button.ATTACK,
+                                vzd.Button.CROUCH,
+                                vzd.Button.JUMP,
+                                vzd.Button.RELOAD,
+                                vzd.Button.LOOK_DOWN,
+                                vzd.Button.LOOK_UP,
+                                vzd.Button.SELECT_NEXT_WEAPON,
+                                vzd.Button.SELECT_PREV_WEAPON])
 
     # Buttons that will be used can be also checked by:
     print("Available buttons:", [b.name for b in game.get_available_buttons()])
@@ -72,13 +79,13 @@ if __name__ == "__main__":
     print("Available game variables:", [v.name for v in game.get_available_game_variables()])
 
     # Causes episodes to finish after 200 tics (actions)
-    game.set_episode_timeout(4000)
+    #game.set_episode_timeout(10000)
 
     # Makes episodes start after 10 tics (~after raising the weapon)
     game.set_episode_start_time(10)
 
     # Makes the window appear (turned on by default)
-    game.set_window_visible(False)
+    game.set_window_visible(True)
 
     # Turns on the sound. (turned off by default)
     # game.set_sound_enabled(True)
@@ -112,9 +119,9 @@ if __name__ == "__main__":
     agent = REINFORCE.agent(n_actions=n_actions,
                             gradient_accumulation=16,
                             lr=4e-4,
-                            reward_scaling = 10)
+                            reward_scaling=10)
 
-    agent.load_model('model30000.pt')
+    #agent.load_model('model30000.pt')
     # Run this many episodes
     episodes = 40000
 
