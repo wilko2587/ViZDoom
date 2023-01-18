@@ -132,7 +132,7 @@ class MedNet(nn.Module):
                             stride=1,
                             padding=1)
         self.m1 = nn.MaxPool2d(kernel_size=2)
-        self.r1 = nn.ReLU()
+        self.rc1 = nn.ReLU()
 
         self.c2 = nn.Conv2d(kernel_size=3,
                             in_channels=16,
@@ -141,7 +141,7 @@ class MedNet(nn.Module):
                             padding=1)
 
         self.m2 = nn.MaxPool2d(kernel_size=2)
-        self.r2 = nn.ReLU()
+        self.rc2 = nn.ReLU()
 
         self.c3 = nn.Conv2d(kernel_size=3,
                             in_channels=16,
@@ -150,7 +150,7 @@ class MedNet(nn.Module):
                             padding=1)
 
         self.m3 = nn.MaxPool2d(kernel_size=2)
-        self.r3 = nn.ReLU()
+        self.rc3 = nn.ReLU()
 
         self.c4 = nn.Conv2d(kernel_size=3,
                             in_channels=16,
@@ -159,16 +159,19 @@ class MedNet(nn.Module):
                             padding=1)
 
         self.m4 = nn.MaxPool2d(kernel_size=2)
-        self.r4 = nn.ReLU()
+        self.rc4 = nn.ReLU()
 
         h = int(h/16)
         w = int(w/16)
         self.fc1 = nn.Linear(h * w * 16, 256)
         self.d1 = nn.Dropout(p=dropout)
+        self.r1 = nn.ReLU()
         self.fc2 = nn.Linear(256, 128)
         self.d2 = nn.Dropout(p=dropout)
+        self.r2 = nn.ReLU()
         self.fc3 = nn.Linear(128, 128)
         self.d3 = nn.Dropout(p=dropout)
+        self.r3 = nn.ReLU()
         self.fc4 = nn.Linear(128, num_classes)
         self.to(self.device)
 
@@ -176,23 +179,26 @@ class MedNet(nn.Module):
         x = x.to(self.device)
         x = self.c1(x)
         x = self.m1(x)
-        x = self.r1(x)
+        x = self.rc1(x)
         x = self.c2(x)
         x = self.m2(x)
-        x = self.r2(x)
+        x = self.rc2(x)
         x = self.c3(x)
         x = self.m3(x)
-        x = self.r3(x)
+        x = self.rc3(x)
         x = self.c4(x)
         x = self.m4(x)
-        x = self.r4(x)
+        x = self.rc4(x)
         x = x.reshape(x.size(0), -1)
         x = self.fc1(x)
         x = self.d1(x)
+        x = self.r1(x)
         x = self.fc2(x)
         x = self.d2(x)
+        x = self.r2(x)
         x = self.fc3(x)
         x = self.d3(x)
+        x = self.r3(x)
         x = self.fc4(x)
         return x.flatten()
 
