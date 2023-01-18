@@ -173,10 +173,10 @@ class MedNet(nn.Module):
         self.d3 = nn.Dropout(p=dropout)
         self.r3 = nn.ReLU()
         self.fc4 = nn.Linear(128, num_classes)
-        self.to(self.device)
+        #self.to(self.device)
 
     def forward(self, x):
-        x = x.to(self.device)
+        #x = x.to(self.device)
         x = self.c1(x)
         x = self.m1(x)
         x = self.rc1(x)
