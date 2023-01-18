@@ -166,12 +166,12 @@ if __name__ == "__main__":
         # make agent learn
         agent.update_networks()
         agent.reset()
+
         # Check how the episode went.
-        print("Episode finished.")
-        print("Total reward:", game.get_total_reward())
+        print("Episode: {} | reward: {}", game.get_total_reward())
         reward_log.append(game.get_total_reward())
-        print("************************")
-        pd.Series(reward_log).to_csv("reward_log.csv")
+        if i % 100 == 0:
+            pd.Series(reward_log).to_csv("reward_log.csv")
 
         if i % 10000 == 0:
             agent.save_model("model{}.pt".format(i))
