@@ -128,15 +128,15 @@ class MedNet(nn.Module):
 
         self.c1 = nn.Conv2d(kernel_size=3,
                             in_channels=3,
-                            out_channels=16,
+                            out_channels=8,
                             stride=1,
                             padding=1)
         self.m1 = nn.MaxPool2d(kernel_size=2)
         self.rc1 = nn.ReLU()
 
         self.c2 = nn.Conv2d(kernel_size=3,
-                            in_channels=16,
-                            out_channels=16,
+                            in_channels=8,
+                            out_channels=8,
                             stride=1,
                             padding=1)
 
@@ -144,8 +144,8 @@ class MedNet(nn.Module):
         self.rc2 = nn.ReLU()
 
         self.c3 = nn.Conv2d(kernel_size=3,
-                            in_channels=16,
-                            out_channels=16,
+                            in_channels=8,
+                            out_channels=8,
                             stride=1,
                             padding=1)
 
@@ -153,8 +153,8 @@ class MedNet(nn.Module):
         self.rc3 = nn.ReLU()
 
         self.c4 = nn.Conv2d(kernel_size=3,
-                            in_channels=16,
-                            out_channels=16,
+                            in_channels=8,
+                            out_channels=8,
                             stride=1,
                             padding=1)
 
@@ -163,10 +163,10 @@ class MedNet(nn.Module):
 
         h = int(h/16)
         w = int(w/16)
-        self.fc1 = nn.Linear(h * w * 16, 256)
+        self.fc1 = nn.Linear(h * w * 8, 128)
         self.d1 = nn.Dropout(p=dropout)
         self.r1 = nn.ReLU()
-        self.fc2 = nn.Linear(256, 128)
+        self.fc2 = nn.Linear(128, 128)
         self.d2 = nn.Dropout(p=dropout)
         self.r2 = nn.ReLU()
         self.fc3 = nn.Linear(128, num_classes)
@@ -181,6 +181,10 @@ class MedNet(nn.Module):
         x = self.m2(x)
         x = self.rc2(x)
         x = self.c3(x)
+        basic
+        scenario
+        map1
+        readded
         x = self.m3(x)
         x = self.rc3(x)
         x = self.c4(x)
