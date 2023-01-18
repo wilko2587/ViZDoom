@@ -172,5 +172,9 @@ if __name__ == "__main__":
         reward_log.append(game.get_total_reward())
         print("************************")
         pd.Series(reward_log).to_csv("reward_log.csv")
+
+        if i % 10000 == 0:
+            agent.save_model("model{}.pt".format(i))
+
     # It will be done automatically anyway but sometimes you need to do it in the middle of the program...
     game.close()

@@ -1,7 +1,6 @@
 import torch
-
 from torch_models import SmallNet
-import numpy as np
+import os
 from torch import optim
 from torch.distributions import Categorical
 
@@ -44,6 +43,15 @@ class agent:
         self.log_probs = []
         self.rewards = []
         self.terms = []
+
+    def save_model(self, name):
+        if name[-3:] != '.pt':
+            name = name + '.pt'
+        torch.save(self.network.state_dict(), os.path.join('TorchModels/', name))
+
+    def load_model(self, name):
+        x = torch.load(os.path.join('./TorchModels/', name))
+        self.network.load_state_dict(x)
 
     def update_networks(self):
         # NB: we will assume the last element in each list is the terminal one
