@@ -23,7 +23,7 @@ if __name__ == "__main__":
 
     # Create DoomGame instance. It will run the game and communicate with you.
     game = vzd.DoomGame()
-    game.set_doom_scenario_path(os.path.join(vzd.scenarios_path, "basic.wad"))
+    game.set_doom_scenario_path(os.path.join(vzd.scenarios_path, "deathmatch.wad"))
     game.set_doom_map("map01")
     game.set_screen_resolution(vzd.ScreenResolution.RES_160X120)
     game.set_screen_format(vzd.ScreenFormat.RGB24)
@@ -72,13 +72,13 @@ if __name__ == "__main__":
     print("Available game variables:", [v.name for v in game.get_available_game_variables()])
 
     # Causes episodes to finish after 200 tics (actions)
-    game.set_episode_timeout(400)
+    game.set_episode_timeout(4000)
 
     # Makes episodes start after 10 tics (~after raising the weapon)
     game.set_episode_start_time(10)
 
     # Makes the window appear (turned on by default)
-    game.set_window_visible(False)
+    game.set_window_visible(True)
 
     # Turns on the sound. (turned off by default)
     # game.set_sound_enabled(True)
@@ -112,6 +112,7 @@ if __name__ == "__main__":
                             gradient_accumulation=16,
                             lr=4e-4)
 
+    agent.load_model('model30000.pt')
     # Run this many episodes
     episodes = 40000
 
