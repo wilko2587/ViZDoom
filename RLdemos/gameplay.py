@@ -68,7 +68,7 @@ if __name__ == "__main__":
     # game.clear_available_game_variables()
     # game.add_available_game_variable(vzd.GameVariable.AMMO2)
     # Or:
-    game.set_available_game_variables([vzd.GameVariable.AMMO2])
+    game.set_available_game_variables([vzd.GameVariable.AMMO2, vzd.GameVariable.HEALTH])
     print("Available game variables:", [v.name for v in game.get_available_game_variables()])
 
     # Causes episodes to finish after 200 tics (actions)
@@ -87,6 +87,7 @@ if __name__ == "__main__":
 
     # Sets the living reward (for each move) to -1
     game.set_living_reward(0)
+    game.set_death_penalty(10)
 
     # Sets ViZDoom mode (PLAYER, ASYNC_PLAYER, SPECTATOR, ASYNC_SPECTATOR, PLAYER mode is default)
     game.set_mode(vzd.Mode.PLAYER)
