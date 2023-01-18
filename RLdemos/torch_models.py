@@ -169,10 +169,7 @@ class MedNet(nn.Module):
         self.fc2 = nn.Linear(256, 128)
         self.d2 = nn.Dropout(p=dropout)
         self.r2 = nn.ReLU()
-        self.fc3 = nn.Linear(128, 128)
-        self.d3 = nn.Dropout(p=dropout)
-        self.r3 = nn.ReLU()
-        self.fc4 = nn.Linear(128, num_classes)
+        self.fc3 = nn.Linear(128, num_classes)
         #self.to(self.device)
 
     def forward(self, x):
@@ -197,9 +194,6 @@ class MedNet(nn.Module):
         x = self.d2(x)
         x = self.r2(x)
         x = self.fc3(x)
-        x = self.d3(x)
-        x = self.r3(x)
-        x = self.fc4(x)
         return x.flatten()
 
 
