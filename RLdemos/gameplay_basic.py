@@ -191,8 +191,8 @@ if __name__ == "__main__":
             pd.Series(reward_log).to_csv("reward_log.csv")
 
         if i % 50000 == 0:
-            agent.save_model("model{}.pt".format(i))
+            agent.save_model("model_basic{}.pt".format(i))
 
     # It will be done automatically anyway but sometimes you need to do it in the middle of the program...
-    agent.save_model("model_basic2{}.pt".format(i)) # save final model
+    agent.save_model("model_basic{}.pt".format(i)) # save final model
     game.close()
