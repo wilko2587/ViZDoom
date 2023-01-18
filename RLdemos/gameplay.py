@@ -111,7 +111,8 @@ if __name__ == "__main__":
 
     agent = REINFORCE.agent(n_actions=n_actions,
                             gradient_accumulation=16,
-                            lr=4e-4)
+                            lr=4e-4,
+                            reward_scaling = 10)
 
     agent.load_model('model30000.pt')
     # Run this many episodes

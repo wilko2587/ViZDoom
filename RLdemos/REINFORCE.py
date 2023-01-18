@@ -7,7 +7,8 @@ from torch.distributions import Categorical
 class agent:
     def __init__(self, n_actions,
                  gradient_accumulation: int = 1,
-                 lr: float = 1e-4):
+                 lr: float = 1e-4,
+                 reward_scaling: [float, int] = 1):
 
         self.n_actions = n_actions
 
@@ -23,6 +24,7 @@ class agent:
         self.log_probs = []
         self.rewards = []
         self.terms = []
+        self.reward_scaling = float(reward_scaling)
 
         self.gradient_accumulation = gradient_accumulation
         self.gradient_accumulation_counter = 0
@@ -62,7 +64,7 @@ class agent:
 
         # replay the episode and update the network
         reinforce_loss = 0 # initialise
-        Rtot = sum(self.rewards)/100
+        Rtot = sum(self.rewards)/self.reward_scaling
         for t in range(len(self.states)):
             log_prob = self.log_probs[t]
             reinforce_loss += -log_prob * Rtot
