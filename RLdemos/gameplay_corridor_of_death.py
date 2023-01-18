@@ -23,9 +23,14 @@ if __name__ == "__main__":
 
     # Create DoomGame instance. It will run the game and communicate with you.
     game = vzd.DoomGame()
-    game.set_doom_scenario_path(os.path.join(vzd.scenarios_path, "basic.wad"))
-    game.set_doom_map("map02")
-    game.set_screen_resolution(vzd.ScreenResolution.RES_160X120)
+
+    # Makes the window appear (turned on by default)
+    game.set_window_visible(True)
+
+    # map and scenario
+    game.set_doom_scenario_path(os.path.join(vzd.scenarios_path, "deadly_corridor.wad"))
+    game.set_doom_map("map01")
+    game.set_screen_resolution(vzd.ScreenResolution.RES_320X240)
     game.set_screen_format(vzd.ScreenFormat.RGB24)
     game.set_depth_buffer_enabled(True)
     game.set_labels_buffer_enabled(True)
@@ -36,7 +41,7 @@ if __name__ == "__main__":
     # Sets other rendering options (all of these options except crosshair are enabled (set to True) by default)
     game.set_render_hud(True)
     game.set_render_minimal_hud(True)  # If hud is enabled
-    game.set_render_crosshair(True)
+    #game.set_render_crosshair(True)
     game.set_render_weapon(True)
     game.set_render_decals(False)  # Bullet holes and blood on the walls
     game.set_render_particles(False)
@@ -72,8 +77,8 @@ if __name__ == "__main__":
                                 vzd.Button.RELOAD,
                                 vzd.Button.LOOK_DOWN,
                                 vzd.Button.LOOK_UP,
-                                vzd.Button.SELECT_NEXT_WEAPON,
-                                vzd.Button.SELECT_PREV_WEAPON,
+                                #vzd.Button.SELECT_NEXT_WEAPON,
+                                #vzd.Button.SELECT_PREV_WEAPON,
                                 ])
 
     # Buttons that will be used can be also checked by:
@@ -90,13 +95,11 @@ if __name__ == "__main__":
     print("Available game variables:", [v.name for v in game.get_available_game_variables()])
 
     # Causes episodes to finish after 200 tics (actions)
-    game.set_episode_timeout(4000)
+    game.set_episode_timeout(2100)
 
     # Makes episodes start after 10 tics (~after raising the weapon)
     game.set_episode_start_time(10)
 
-    # Makes the window appear (turned on by default)
-    game.set_window_visible(False)
 
     # Turns on the sound. (turned off by default)
     # game.set_sound_enabled(True)
@@ -105,7 +108,7 @@ if __name__ == "__main__":
 
     # Sets the living reward (for each move) to -1
     game.set_living_reward(-0.1)
-    game.set_death_penalty(500)
+    game.set_death_penalty(100)
 
     # Sets ViZDoom mode (PLAYER, ASYNC_PLAYER, SPECTATOR, ASYNC_SPECTATOR, PLAYER mode is default)
     game.set_mode(vzd.Mode.PLAYER)
@@ -131,12 +134,14 @@ if __name__ == "__main__":
                             gradient_accumulation=16,
                             lr=2e-4,
                             model=MedNet,
-                            reward_scaling=100)
+                            reward_scaling=100,
+                            screen_dims=(game.get_screen_width(), game.get_screen_height())
+                            )
 
     #agent.load_model('model30000.pt')
 
     # Run this many episodes
-    episodes = 20000
+    episodes = 200000
 
     # Sets time that will pause the engine after each action (in seconds)
     # Without this everything would go too fast for you to keep track of what's happening.
