@@ -14,8 +14,10 @@
 import os
 from random import choice
 from time import sleep
+import pandas as pd
+import torch
 import vizdoom as vzd
-
+import REINFORCE
 
 if __name__ == "__main__":
     # Create DoomGame instance. It will run the game and communicate with you.
@@ -34,7 +36,7 @@ if __name__ == "__main__":
     game.set_doom_map("map01")
 
     # Sets resolution. Default is 320X240
-    game.set_screen_resolution(vzd.ScreenResolution.RES_320X240)
+    game.set_screen_resolution(vzd.ScreenResolution.RES_160X120)
 
     # Sets the screen buffer format. Not used here but now you can change it. Default is CRCGCB.
     game.set_screen_format(vzd.ScreenFormat.RGB24)
@@ -92,7 +94,7 @@ if __name__ == "__main__":
     game.set_episode_start_time(10)
 
     # Makes the window appear (turned on by default)
-    game.set_window_visible(True)
+    game.set_window_visible(False)
 
     # Turns on the sound. (turned off by default)
     # game.set_sound_enabled(True)
@@ -118,18 +120,20 @@ if __name__ == "__main__":
     actions = [[True, False, False], [False, True, False], [False, False, True]]
 
     # Run this many episodes
-    episodes = 10
+    episodes = 40000
 
     # Sets time that will pause the engine after each action (in seconds)
     # Without this everything would go too fast for you to keep track of what's happening.
-    sleep_time = 1.0 / vzd.DEFAULT_TICRATE  # = 0.028
-
+    #sleep_time = 1.0 / vzd.DEFAULT_TICRATE  # = 0.028
+    sleep_time = 0.0
+    reward_log = []
     for i in range(episodes):
         print("Episode #" + str(i + 1))
 
         # Starts a new episode. It is not needed right after init() but it doesn't cost much. At least the loop is nicer.
         game.new_episode()
 
+        agent = REINFORCE.agent(actions=actions)
         while not game.is_episode_finished():
 
             # Gets the state
@@ -146,35 +150,27 @@ if __name__ == "__main__":
             objects = state.objects
             sectors = state.sectors
 
-            # Games variables can be also accessed via
-            # (including the ones that were not added as available to a game state):
-            #game.get_game_variable(GameVariable.AMMO2)
+            screen_buf = torch.from_numpy(screen_buf).float()
+            screen_buf = torch.nn.functional.pad(screen_buf, (0, 0, 0, 0, 4, 4), "constant", 0)  # pad so it fits the network
+            screen_buf = torch.transpose(screen_buf, dim0=0, dim1=2)  # need to put channels first for VGG
+            screen_buf = screen_buf.unsqueeze(0)  # add in batch dimension, required by VGG
 
-            # Makes an action (here random one) and returns a reward.
-            r = game.make_action(choice(actions))
+            action, log_probs = agent.act(screen_buf)
+            r = game.make_action(actions[action])
 
-            # Makes a "prolonged" action and skip frames:
-            # skiprate = 4
-            # r = game.make_action(choice(actions), skiprate)
-
-            # The same could be achieved with:
-            # game.set_action(choice(actions))
-            # game.advance_action(skiprate)
-            # r = game.get_last_reward()
-
-            # Prints state's game variables and reward.
-            print("State #" + str(n))
-            print("Game variables:", vars)
-            print("Reward:", r)
-            print("=====================")
+            agent.remember((screen_buf, action, log_probs, r, game.is_episode_finished()))
 
             if sleep_time > 0:
                 sleep(sleep_time)
 
+        # make agent learn
+        agent.update_networks()
+        agent.reset()
         # Check how the episode went.
         print("Episode finished.")
         print("Total reward:", game.get_total_reward())
+        reward_log.append(game.get_total_reward())
         print("************************")
-
+        pd.Series(reward_log).to_csv("reward_log.csv")
     # It will be done automatically anyway but sometimes you need to do it in the middle of the program...
     game.close()
