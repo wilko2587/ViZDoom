@@ -124,7 +124,7 @@ class MedNet(nn.Module):
 
         super(MedNet, self).__init__()
 
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        #self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         self.c1 = nn.Conv2d(kernel_size=3,
                             in_channels=3,
