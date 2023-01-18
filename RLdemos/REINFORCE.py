@@ -5,16 +5,19 @@ from torch import optim
 from torch.distributions import Categorical
 
 class agent:
-    def __init__(self, n_actions,
+    def __init__(self,
+                 model = SmallNet,
+                 n_actions: int = 3,
+                 screen_dims: tuple = (160, 128),
                  gradient_accumulation: int = 1,
                  lr: float = 1e-4,
                  reward_scaling: [float, int] = 1):
 
         self.n_actions = n_actions
 
-        self.network = SmallNet(
-            in_height=160,
-            in_width=128, # width needs 8 padding to fit architecture (divisible by 32)
+        self.network = model(
+            in_height=screen_dims[0],
+            in_width=screen_dims[1],
             num_classes=n_actions,
         )
 

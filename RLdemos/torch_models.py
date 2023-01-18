@@ -64,6 +64,135 @@ class SmallNet(nn.Module):
         return x.flatten()
 
 
+class MedNet(nn.Module):
+    """
+    For input [3 x 128 x 160]
+
+    -----
+    conv2d: kernel size 3, 16 out channels, padding 1
+    [16 x 128 x 160]
+    maxpool: kernel size 2
+    [16 x 64 x 80]
+    ReLU
+    [16 x 64 x 80]
+    ------
+
+    ------
+    conv2d: kernel size 3, 16 our channels, padding 1
+    [16 x 32 x 40]
+    maxpool: kernel size 2
+    [16 x 32 x 40]
+    ReLU
+    [16 x 32 x 40]
+    ------
+
+    ------
+    conv2d: kernel size 3, 16 our channels, padding 1
+    [16 x 32 x 40]
+    maxpool: kernel size 2
+    [16 x 16 x 20]
+    ReLU
+    [16 x 16 x 20]
+    ------
+
+    ------
+    conv2d: kernel size 3, 16 our channels, padding 1
+    [16 x 16 x 20]
+    maxpool: kernel size 2
+    [16 x 8 x 10]
+    ReLU
+    [16 x 8 x 10]
+    ------
+
+    linear: in (8 * 10 * 16): out ( 10 * 16 )
+    dropout
+    linear: in ( 10 * 16): out ( 10 * 16 )
+    dropout
+    linear: in ( 10 * 16): out [num_actions]
+    [num_actions]
+    """
+
+    def __init__(self,
+                 in_height: int,
+                 in_width: int,
+                 num_classes: int,
+                 dropout: float = 0.1,
+                 ):
+
+        h = in_height
+        w = in_width
+
+        super(MedNet, self).__init__()
+
+        self.c1 = nn.Conv2d(kernel_size=3,
+                            in_channels=3,
+                            out_channels=16,
+                            stride=1,
+                            padding=1)
+        self.m1 = nn.MaxPool2d(kernel_size=2)
+        self.r1 = nn.ReLU()
+
+        self.c2 = nn.Conv2d(kernel_size=3,
+                            in_channels=16,
+                            out_channels=16,
+                            stride=1,
+                            padding=1)
+
+        self.m2 = nn.MaxPool2d(kernel_size=2)
+        self.r2 = nn.ReLU()
+
+        self.c3 = nn.Conv2d(kernel_size=3,
+                            in_channels=16,
+                            out_channels=16,
+                            stride=1,
+                            padding=1)
+
+        self.m3 = nn.MaxPool2d(kernel_size=2)
+        self.r3 = nn.ReLU()
+
+        self.c4 = nn.Conv2d(kernel_size=3,
+                            in_channels=16,
+                            out_channels=16,
+                            stride=1,
+                            padding=1)
+
+        self.m4 = nn.MaxPool2d(kernel_size=2)
+        self.r4 = nn.ReLU()
+
+        h = int(h/16)
+        w = int(w/16)
+        self.fc1 = nn.Linear(h * w * 16, 256)
+        self.d1 = nn.Dropout(p=dropout)
+        self.fc2 = nn.Linear(256, 128)
+        self.d2 = nn.Dropout(p=dropout)
+        self.fc3 = nn.Linear(128, 128)
+        self.d3 = nn.Dropout(p=dropout)
+        self.fc4 = nn.Linear(128, num_classes)
+
+    def forward(self, x):
+        x = self.c1(x)
+        x = self.m1(x)
+        x = self.r1(x)
+        x = self.c2(x)
+        x = self.m2(x)
+        x = self.r2(x)
+        x = self.c3(x)
+        x = self.m3(x)
+        x = self.r3(x)
+        x = self.c4(x)
+        x = self.m4(x)
+        x = self.r4(x)
+        x = x.reshape(x.size(0), -1)
+        x = self.fc1(x)
+        x = self.d1(x)
+        x = self.fc2(x)
+        x = self.d2(x)
+        x = self.fc3(x)
+        x = self.d3(x)
+        x = self.fc4(x)
+        return x.flatten()
+
+
 class VGG(nn.Module):
     def __init__(
             self,
