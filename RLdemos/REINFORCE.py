@@ -48,6 +48,13 @@ class agent:
         self.terms.append(tup[4])
 
     def reset(self):
+
+        del self.states
+        del self.n_actions
+        del self.log_probs
+        del self.rewards
+        del self.terms
+
         self.states = []
         self.n_actions = []
         self.log_probs = []
