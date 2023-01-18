@@ -86,7 +86,7 @@ if __name__ == "__main__":
     # the sound is only useful for humans watching the game.
 
     # Sets the living reward (for each move) to -1
-    game.set_living_reward(-1)
+    game.set_living_reward(0)
 
     # Sets ViZDoom mode (PLAYER, ASYNC_PLAYER, SPECTATOR, ASYNC_SPECTATOR, PLAYER mode is default)
     game.set_mode(vzd.Mode.PLAYER)
